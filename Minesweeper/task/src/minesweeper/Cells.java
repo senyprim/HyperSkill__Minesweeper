@@ -6,6 +6,11 @@ public class Cells {
     private int width;
     private int height;
     private int countMines;
+    private int truthMark=0;
+    private int countMark=0;
+
+
+
     private Cell[][] cells;
 
     public Cells(int width,int height,int countMines){
@@ -29,6 +34,22 @@ public class Cells {
             countMines--;
         }
     }
+    public int getNeighbornMine(int x,int y){
+        return cells[y][x].getNeighborsMine();
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public boolean isWin(){
+        return  countMark==truthMark && countMark==countMines;
+    }
+
     public Cell[][] getCells(){
         return this.cells;
     }
@@ -55,6 +76,21 @@ public class Cells {
         for (Cell cell:getNeighborns(x,y) ) {
          cell.setNeighborsMine(cell.getNeighborsMine()+1);
         }
+    }
+    private void checkMark(int x,int y){
+        Cell cell = cells[y][x];
+        if (cell.isMark()){
+            this.countMark++;
+            if (cell.isMine()) this.truthMark++;
+        } else {
+            this.countMark--;
+            if (cell.isMine()) this.truthMark--;
+        }
+    }
+    public void setMark(int x,int y){
+        Cell cell=cells[y][x];
+        cell.setMark(!cell.isMark());
+        checkMark(x,y);
     }
 
     @Override
