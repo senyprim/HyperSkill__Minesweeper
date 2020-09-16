@@ -8,43 +8,47 @@ public class Cells {
     private int countMines;
     private int truthMark=0;
     private int countMark=0;
-
-
-
     private Cell[][] cells;
 
     public Cells(int width,int height,int countMines){
         this.width=width;
         this.height=height;
         this.countMines=countMines;
-        this.cells=new Cell[this.width][this.height];
-
+        this.cells= new Cell[width][height];
         for (int x=0;x<width;x++)
             for (int y=0;y<height;y++)
-                this.cells[y][x]=new Cell(false);
+                cells[y][x]=new Cell(false);
+    }
+    private  void fillCells(){
         Random rnd = new Random();
-
         while (countMines>0){
             int x=rnd.nextInt(width);
             int y=rnd.nextInt(height);
-
-            if (this.cells[y][x].isMine()) continue;
-            this.cells[y][x]=new Cell(true);
-            setNeighborns(x,y);
+            if (cells[y][x].isMine() || cells[y][x].isOpen()) continue;
+            cells[y][x]=new Cell(true);
+            increaseValues(x,y);
             countMines--;
         }
-    }
-    public int getNeighbornMine(int x,int y){
-        return cells[y][x].getNeighborsMine();
     }
 
     public int getWidth() {
         return width;
     }
-
     public int getHeight() {
         return height;
     }
+    public void openCell(int x,int y){ cells[y][x].open();}
+    public void open(int x,int y){
+        if (cells[y][x].getValue()>0){
+            openCell(x,y);
+            return;
+        } else{
+            for (Cell cell:getNeighborns())
+        }
+
+    }
+    public boolean isOpen(int x,int y){ return cells[y][x].isOpen();}
+    public int getValue(int x,int y){return cells[y][x].getValue(); }
 
     public boolean isWin(){
         return  countMark==truthMark && countMark==countMines;
@@ -71,10 +75,10 @@ public class Cells {
         }
         return neighbor.toArray(new Cell[0]);
     }
-    private void setNeighborns(int x,int y){
+    private void increaseValues(int x,int y){
         if (!cells[y][x].isMine()) return;
         for (Cell cell:getNeighborns(x,y) ) {
-         cell.setNeighborsMine(cell.getNeighborsMine()+1);
+         cell.setValue(cell.getValue()+1);
         }
     }
     private void checkMark(int x,int y){
@@ -98,5 +102,4 @@ public class Cells {
         return String.join("\n",Arrays.stream(cells).map(row->String.join("",Arrays.stream(row).map(Cell::toString).toArray(String[]::new)))
                 .toArray(String[]::new));
     }
-
 }
